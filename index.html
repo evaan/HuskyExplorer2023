@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                background-color: #323232;
+            }
+            p, h1 {
+                color: white;
+                font-family: Arial;
+                font-weight: bold;
+                white-space: pre-line;
+            }
+            .red {
+                color:red;
+            }
+            .green{
+                color:lime;
+            }
+            .center {
+                font-size: 64px;
+                position: absolute;
+                top: 30%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+
+            }
+        </style>
+        <title>ROV Controller</title>
+    </head>
+    <body>
+        <div class="center">
+            <h1 id="halfspeed" class="red" style="margin-bottom: 16px; outline-style: solid; outline-color: yellow;">HALF SPEED!</h1>
+            <h1 id="upfast" class="red" style="margin-top: 16px; outline-style: solid; outline-color: yellow;">UP FAST!</h1>
+        </div>
+        <h1 style="display: inline">Controller status: </h1>
+        <h1 id="connected" class="red" style="display: inline">●</h1>
+        <p id="debug"></p>
+        <p id="info"></p>
+        <script src="index.js"></script> <!-- Run script here as if not the page will not run properly. -->
+    </body>
+</html>
