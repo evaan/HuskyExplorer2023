@@ -27,12 +27,12 @@ app.post("/init", (req, res) => {
 // Get motor values and send them to the ESCs
 app.post("/motor", (req, res) => {
    console.log(req.body);
-   pwm.setPulseValue(0, req.body.motor1*400*modifier);
-   pwm.setPulseValue(1, req.body.motor2*400*modifier);
-   pwm.setPulseValue(2, req.body.motor3*400*modifier);
-   pwm.setPulseValue(3, req.body.motor4*400*modifier);
-   pwm.setPulseValue(4, req.body.motor5*400*modifier);
-   pwm.setPulseValue(5, req.body.motor6*400*modifier);
+   pwm.setPulseValue(0, 1100+(req.body.motor1*400*modifier));
+   pwm.setPulseValue(1, 1100+(req.body.motor2*400*modifier));
+   pwm.setPulseValue(2, 1100+(req.body.motor3*400*modifier));
+   pwm.setPulseValue(3, 1100+(req.body.motor4*400*modifier));
+   pwm.setPulseValue(4, 1100+(req.body.motor5*400*modifier));
+   pwm.setPulseValue(5, 1100+(req.body.motor6*400*modifier));
 
 })
   
