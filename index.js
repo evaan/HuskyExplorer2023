@@ -7,6 +7,13 @@ const port = process.env.PORT || 80;
 const i2cBus = require("i2c-bus");
 const Pca9685Driver = require("pca9685").Pca9685Driver;
 
+var options = {
+    i2c: i2cBus.openSync(1),
+    address: 0x40,
+    frequency: 80,
+    debug: false
+};
+
 //MAKE SURE TO CHANGE THIS WHEN TESTING ON THE ACTUAL ROV AS CHANNELS MAY BE DIFFERENT!!!
 pwm = new Pca9685Driver(options, function(err) {
     for (var i = 0; i>6; i++);
