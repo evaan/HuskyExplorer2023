@@ -1,0 +1,13 @@
+[Unit]
+Description=ROV Pneumatics Service
+After=network.target
+
+[Service]
+ExecStart=/home/pi/ROV/Pneumatics/index.py
+WorkingDirectory=/home/pi/ROV/Pneumatics
+User=pi
+Type=notify
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

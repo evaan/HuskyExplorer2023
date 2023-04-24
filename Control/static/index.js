@@ -11,10 +11,6 @@ var interval;
 var halfspeed = false;
 var upfast = false;
 
-$(document).ready(function () {
-    $.post("/init", {'modifier': modifier});
- });
- 
 window.addEventListener('gamepadconnected', (e) => {
     index = e.gamepad.index;
     connected.classList = "green";
@@ -30,6 +26,7 @@ window.addEventListener('gamepadconnected', (e) => {
          */
 
         $.post("/motor", {motor1: motors[0], motor2: motors[1], motor3: motors[2], motor4: motors[3], motor5: motors[4], motor6: motors[5]});
+        $.post("/claw", {pressed: navigator.getGamepads()[index].buttons[7].pressed});
         info.textContent = `Motors:
         [${motors[0]}, ${motors[1]}]
         [${motors[2]}, ${motors[3]}]
