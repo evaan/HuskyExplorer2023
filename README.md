@@ -17,8 +17,8 @@ It is possible to run the ROV Control and Pneumatic automatically on starting us
  - NOTE: The services are written assuming that the default user is pi, and that the scripts are located in `~/ROV/Control/index.py` or `~/ROV/Pneumatics/index.py`.
 
 ## Controls
-- Left Stick: Forward/Backward Movement and Strafing
+ - Left Stick: Forward/Backward Movement and Strafing
  - Right Stick: Vertical Movement and Turning
  - Y/Triangle Button: Full Upwards Movement, Disabling Horizontal
- - Left Trigger: Half Speed
+ - Left Bumper: Half Speed
  - Right Trigger: Close Claw (releasing button opens claw)
