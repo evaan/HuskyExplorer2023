@@ -1,0 +1,24 @@
+{
+  "name": "rov-ui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evaan/ROV-UI.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/evaan/ROV-UI/issues"
+  },
+  "homepage": "https://github.com/evaan/ROV-UI#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.21",
+    "pca9685": "^5.0.0"
+  }
+}
