@@ -4,30 +4,37 @@ const debug = document.getElementById("debug");
 const info = document.getElementById("info");
 
 const deadzone = 0.15;
-const modifier = 0.10;
+const modifier = 10;
 
 var interval;
 
 var halfspeed = false;
 var upfast = false;
 
+const occurrencesOf = (number,numbers) => numbers.reduce((counter, currentNumber)=> (number === currentNumber ? counter+1 : counter),0);
+
 window.addEventListener('gamepadconnected', (e) => {
     index = e.gamepad.index;
     connected.classList = "green";
     debug.textContent = `Index: ${e.gamepad.index}\nId: ${e.gamepad.id}\nButtons: ${e.gamepad.buttons.length}\nAxes: ${e.gamepad.axes.length}`;
     interval = setInterval(() => {
-        var motors = motorCalculation(round(navigator.getGamepads()[index].axes[0]), round(navigator.getGamepads()[index].axes[1]), round(navigator.getGamepads()[index].axes[2]));
+    var motors = motorCalculation(round(navigator.getGamepads()[index].axes[0]), round(navigator.getGamepads()[index].axes[1]), round(navigator.getGamepads()[index].axes[2]));
+        
+        /**
+         *  MOTOR INDEX (CHANGE IF NEEDED):
+         *  0 \ / 1
+         *  3 - - 2
+         *  4 / \ 5
+         **/
+
+        $.post("/motors", {"motor0": motors[0], "motor1": motors[1], "motor2": motors[3], "motor3": motors[2], "motor4": motors[4], "motor5": motors[5]});
         info.textContent = `Motors:
         [${motors[0]}, ${motors[1]}]
-        [${(upfast) ? 1 : -round(navigator.getGamepads()[index].axes[3])}, ${(upfast) ? 1 : -round(navigator.getGamepads()[index].axes[3])}]
         [${motors[2]}, ${motors[3]}]
+        [${motors[4]}, ${motors[5]}]
 
         Left Stick: (${round(navigator.getGamepads()[index].axes[0])}, ${round(navigator.getGamepads()[index].axes[1])})
         Right Stick: (${round(navigator.getGamepads()[index].axes[2])}, ${round(navigator.getGamepads()[index].axes[3])})
-        Left Stick Pressed: ${navigator.getGamepads()[index].buttons[10].pressed}
-        Right Stick Pressed: ${navigator.getGamepads()[index].buttons[11].pressed}
-        Back Button: ${navigator.getGamepads()[index].buttons[8].pressed}
-        Start Button: ${navigator.getGamepads()[index].buttons[9].pressed}
 
         A Button: ${navigator.getGamepads()[index].buttons[0].pressed}
         B Button: ${navigator.getGamepads()[index].buttons[1].pressed}
@@ -43,17 +50,17 @@ window.addEventListener('gamepadconnected', (e) => {
         Right Bumper: ${navigator.getGamepads()[index].buttons[5].pressed}
         Right Trigger: ${navigator.getGamepads()[index].buttons[6].pressed}
         Right Trigger: ${navigator.getGamepads()[index].buttons[7].pressed}`;
-        if (navigator.getGamepads()[index].buttons[10].pressed && !halfspeed) {
+        if (navigator.getGamepads()[index].buttons[4].pressed && !halfspeed) {
             halfspeed = true;
             document.getElementById("halfspeed").hidden = false;
-        } else if (!navigator.getGamepads()[index].buttons[10].pressed && halfspeed) {
+        } else if (!navigator.getGamepads()[index].buttons[4].pressed && halfspeed) {
             halfspeed = false;
             document.getElementById("halfspeed").hidden = true;
         }
-        if (navigator.getGamepads()[index].buttons[8].pressed && !upfast) {
+        if (navigator.getGamepads()[index].buttons[3].pressed && !upfast) {
             upfast = true;
             document.getElementById("upfast").hidden = false;
-        } else if (!navigator.getGamepads()[index].buttons[8].pressed && upfast) {
+        } else if (!navigator.getGamepads()[index].buttons[3].pressed && upfast) {
             upfast = false;
             document.getElementById("upfast").hidden = true;
         }
@@ -74,7 +81,11 @@ function round(int) {
 }
 
 function motorCalculation(lx, ly, rx) {
-    if (upfast) return [0, 0, 0 ,0]; //disable the horizontal motors if going up fast
+    if (upfast) return [90, 90, 110, 110, 90, 90]; //disable the horizontal motors if going up fast
+    //check if more than 1 sticks are active
+    //lx /= occurrencesOf(true, [lx != 0, ly != 0, rx != 0]);
+    //ly /= occurrencesOf(true, [lx != 0, ly != 0, rx != 0]);
+    //rx /= occurrencesOf(true, [lx != 0, ly != 0, rx != 0]);
     ly = -ly; //CHANGE THIS IF THE MOTORS ARE BACKWARDS!!!
     var frontleft = ly;
     var frontright = ly;
@@ -110,5 +121,5 @@ function motorCalculation(lx, ly, rx) {
         backleft /= 2;
         backright /= 2;
     }
-    return[Math.floor(frontleft*100)/100, Math.floor(frontright*100)/100, Math.floor(backleft*100)/100, Math.floor(backright*100)/100];
+    return[Math.floor(frontleft*100)/modifier+90, Math.floor(frontright*100)/modifier+90, (upfast) ? 1 : -round(navigator.getGamepads()[index].axes[3])*(2*modifier)+90, (upfast) ? 1 : -round(navigator.getGamepads()[index].axes[3])*(2*modifier)+90, Math.floor(backleft*100)/modifier+90, Math.floor(backright*100)/modifier+90];
 }
