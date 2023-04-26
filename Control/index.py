@@ -1,12 +1,14 @@
 from flask import Flask, send_from_directory, request
 import requests
-from adafruit_servokit import ServoKit
+#from adafruit_servokit import ServoKit
 
-kit = ServoKit(channels=16)
+#kit = ServoKit(channels=16)
 app = Flask(__name__)
 
-for x in range(0, 6):
-    kit.servo[x].angle = 90
+#for x in range(0, 6):
+    #kit.servo[x].angle = 90
+
+vpinfo = ""
 
 @app.route('/')
 def loveIsInTheAir():
@@ -30,6 +32,18 @@ def recieve():
 def claw():
     requests.post("http://127.0.0.1:5000/claw", data=request.form) #CHANGE THIS TO THE PNEUMATIC SERVERS IP!
     return "sheesh"
+
+@app.post('/vpinput')
+def vpSender():
+    global vpinfo
+    vpinfo += request.form['text'] + "\n"
+    print(vpinfo)
+    return "success"
+
+@app.route('/vp', methods=["GET"])
+def returnVpInfo():
+    global vpinfo
+    return vpinfo
 
 if __name__ == '__main__':
     app.run(port=80)

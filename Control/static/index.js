@@ -7,11 +7,22 @@ const deadzone = 0.15;
 const modifier = 10;
 
 var interval;
+var vpInterval;
 
 var halfspeed = false;
 var upfast = false;
 
 const occurrencesOf = (number,numbers) => numbers.reduce((counter, currentNumber)=> (number === currentNumber ? counter+1 : counter),0);
+
+vpInterval = setInterval(() => {
+    $.ajax({
+        url:"/vp",
+        type:'GET',
+        success: function(data){
+            document.getElementById("vp").textContent = data
+        }
+     });
+}, 2500)
 
 window.addEventListener('gamepadconnected', (e) => {
     index = e.gamepad.index;
