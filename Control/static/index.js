@@ -29,7 +29,7 @@ window.addEventListener('gamepadconnected', (e) => {
     connected.classList = "green";
     debug.textContent = `Index: ${e.gamepad.index}\nId: ${e.gamepad.id}\nButtons: ${e.gamepad.buttons.length}\nAxes: ${e.gamepad.axes.length}`;
     interval = setInterval(() => {
-    var motors = motorCalculation(round(navigator.getGamepads()[index].axes[0]), round(navigator.getGamepads()[index].axes[1]), round(navigator.getGamepads()[index].axes[2]));
+        var motors = motorCalculation(round(navigator.getGamepads()[index].axes[0]), round(navigator.getGamepads()[index].axes[1]), round(navigator.getGamepads()[index].axes[2]));
         
         /**
          *  MOTOR INDEX (CHANGE IF NEEDED):
@@ -38,7 +38,7 @@ window.addEventListener('gamepadconnected', (e) => {
          *  4 / \ 5
          **/
 
-        $.post("/motors", {"motor0": motors[0], "motor1": motors[1], "motor2": motors[3], "motor3": motors[2], "motor4": motors[4], "motor5": motors[5]});
+        $.postq("/motors", {"motor0": motors[0], "motor1": motors[1], "motor2": motors[3], "motor3": motors[2], "motor4": motors[4], "motor5": motors[5]});
         info.textContent = `Motors:
         [${motors[0]}, ${motors[1]}]
         [${motors[2]}, ${motors[3]}]

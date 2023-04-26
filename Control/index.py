@@ -1,12 +1,13 @@
 from flask import Flask, send_from_directory, request
 import requests
-#from adafruit_servokit import ServoKit
+from adafruit_servokit import ServoKit
+from math import degrees, atan, sqrt
 
-#kit = ServoKit(channels=16)
+kit = ServoKit(channels=16)
 app = Flask(__name__)
 
-#for x in range(0, 6):
-    #kit.servo[x].angle = 90
+for x in range(0, 6):
+    kit.servo[x].angle = 90
 
 vpinfo = ""
 
