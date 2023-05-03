@@ -10,6 +10,7 @@ app = Flask(__name__)
     #kit.servo[x].angle = 90
 
 vpinfo = ""
+vptempinfo = []
 
 @app.route('/')
 def loveIsInTheAir():
@@ -38,14 +39,23 @@ def claw():
 @app.post('/vpinput')
 def vpSender():
     global vpinfo
-    vpinfo += request.form['text'] + "\n"
+    vpinfo = vpinfo + ("\n" if vpinfo != "" else "") + request.form['text']
     print(vpinfo)
+    return "success"
+
+@app.post('/vptempinput')
+def vpTempSender():
+    global vptempinfo
+    vptempinfo.reverse()
+    vptempinfo.append(request.form['text'])
+    vptempinfo.reverse()
+
     return "success"
 
 @app.route('/vp', methods=["GET"])
 def returnVpInfo():
-    global vpinfo
-    return vpinfo
+    global vpinfo, vptempinfo
+    return (('\n'.join(vptempinfo[:5]) + '\n\n') if vptempinfo != "" else "") + vpinfo
 
 if __name__ == '__main__':
-    app.run(port=80)
+    app.run(port=80, host='0.0.0.0')
