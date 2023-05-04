@@ -13,8 +13,7 @@ var halfspeed = false;
 var upfast = false;
 
 var clawrotate = false;
-var rotationcooldown = false;
-
+var clawcooldown = false;
 const occurrencesOf = (number,numbers) => numbers.reduce((counter, currentNumber)=> (number === currentNumber ? counter+1 : counter),0);
 
 vpInterval = setInterval(() => {
@@ -25,7 +24,7 @@ vpInterval = setInterval(() => {
             document.getElementById("vp").textContent = data
         }
      });
-}, 1000)
+}, 2000)
 
 window.addEventListener('gamepadconnected', (e) => {
     index = e.gamepad.index;
@@ -77,13 +76,9 @@ window.addEventListener('gamepadconnected', (e) => {
             upfast = false;
             document.getElementById("upfast").hidden = true;
         }
-        if (navigator.getGamepads()[index].buttons[6].pressed && !rotationcooldown) {
-            clawrotate = true;
-            setTimeout(() => {rotationcooldown = false}, 350);
-            rotationcooldown = true;
-        }
-        $.postq("/motors", {"motor0": motors[0], "motor1": motors[1], "motor2": motors[3], "motor3": motors[2], "motor4": motors[4], "motor5": motors[5], "clawrotate" : clawrotate});
-    }, 100);
+	$.post("http://192.168.177.11:5000/claw", {"pressed": (navigator.getGamepads()[index].buttons[7].pressed) ? 1 : 0});
+        $.post("/motors", {"motor0": motors[0], "motor1": motors[1], "motor2": motors[3], "motor3": motors[2], "motor4": motors[4], "motor5": motors[5], "clawrotate" : (navigator.getGamepads()[index].buttons[6].pressed) ? 1 : 0});
+    }, 150);
 });
 
 window.addEventListener('gamepaddisconnected', (e) => {
@@ -144,14 +139,13 @@ function motorCalculation(lx, ly, rx) {
 }
 
 //last years motor calc
-function motorCalc(x, y, r) {
+function motorCalcOld(x, y, r) {
   if (upfast) {
     return[90, 90, 120, 120, 90, 90];
   }
   if (!(r > -deadzone && r < deadzone)) {
-    return [100 * r, -100 * r, -100 * r, 100 * r];
+    return [(10 * r), (-10 * r), (-10 * r) + 90, (10 * r) + 90];
   }
-
   const p = Math.sqrt(x * x + y * y);
 
   let AC, BD;
@@ -171,5 +165,47 @@ function motorCalc(x, y, r) {
     BD /= 2;
   }
 
-  return y < 0 ? [-AC*modifier+90, -BD*modifier+90, -round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90, -round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90, -AC*modifier+90, -BD*modifier+90] : [AC*modifier+90, BD*modifier+90, -round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90, -round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90, AC*modifier+90, BD*modifier+90];
+  return y < 0 ? [parseInt(-AC*modifier+90), parseInt(-BD*modifier+90), parseInt(round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90), parseInt(round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90), parseInt(AC*modifier+90), parseInt(BD*modifier+90)] : [parseInt(AC*modifier+90), parseInt(BD*modifier+90), parseInt(round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90), parseInt(round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90), parseInt(-AC*modifier+90), parseInt(-BD*modifier+90)];
+}
+
+function degrees(radians)
+{
+  var pi = Math.PI;
+  return radians * (180/pi);
+}
+
+function motor_values(x, y, r) {
+    y = y*-1;
+    if (r != 0) {
+        return [100*r, -100*r, -100*r, 100*r];
+    }
+
+    let p = Math.sqrt(x*x + y*y);
+
+    let AC, BD;
+    if ((x < 0) != (y < 0)) {
+	x = x*-1;
+        if (y !== 0) AC = (100 - (degrees(Math.atan(Math.abs(x/y))) * (20/9)));
+        else AC = -100 * p;
+        BD = 100 * p;
+    } else {
+        AC = 100 * p;
+        if (y !== 0) BD = (100 - (degrees(Math.atan(Math.abs(x/y))) * (20/9)));
+        else BD = -100 * p;
+    }
+
+    if (y<0) return [-AC, -BD, -AC, -BD];
+    else return [AC, BD, AC, BD];
+}
+
+function motorCalc(x, y, n) {
+	balls = motor_values(x, y, n);
+	return[
+		parseInt(90 + (balls[2]*modifier)),
+		parseInt(90 + (balls[3]*modifier)),
+		parseInt(round(navigator.getGamepads()[index].axes[3])*(2/modifier)*2+90),
+		parseInt(round(navigator.getGamepads()[index].axes[3])*(2/modifier)*2+90),
+		parseInt(90 - (balls[1]*modifier)),
+		parseInt(90 - (balls[0]*modifier))
+	]
 }

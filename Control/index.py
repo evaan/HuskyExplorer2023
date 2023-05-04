@@ -1,13 +1,13 @@
 from flask import Flask, send_from_directory, request
 import requests
-#from adafruit_servokit import ServoKit
+from adafruit_servokit import ServoKit
 from math import degrees, atan, sqrt
 
-#kit = ServoKit(channels=16)
+kit = ServoKit(channels=16)
 app = Flask(__name__)
 
-#for x in range(0, 6):
-    #kit.servo[x].angle = 90
+for x in range(0, 6):
+    kit.servo[x].angle = 90
 
 vpinfo = ""
 vptempinfo = []
@@ -26,14 +26,14 @@ def gasLeak():
 
 @app.post('/motors')
 def recieve():
-    #for x in range(0, 6):
-        #kit.servo[x].angle = request.form["motor" + x]
-    #kit.servo[8].angle = (110 if request.form["clawrotate"] else 0)
+    for x in range(0, 6):
+        kit.servo[x].angle = int(float(request.form["motor" + str(x)]))
+    kit.servo[8].angle = (0 if request.form["clawrotate"] == "1" else 180)
     return "penor"
 
 @app.post('/claw')
 def claw():
-    requests.post("http://127.0.0.1:5000/claw", data=request.form) #CHANGE THIS TO THE PNEUMATIC SERVERS IP!
+    requests.post("http://192.168.177.11:5000/claw", data=request.form) #CHANGE THIS TO THE PNEUMATIC SERVERS IP!
     return "sheesh"
 
 @app.post('/vpinput')
@@ -58,4 +58,4 @@ def returnVpInfo():
     return (('\n'.join(vptempinfo[:5]) + '\n\n') if vptempinfo != "" else "") + vpinfo
 
 if __name__ == '__main__':
-    app.run(port=80, host='0.0.0.0')
+    app.run(port=8080, host='0.0.0.0')
