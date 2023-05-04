@@ -4,7 +4,7 @@ const debug = document.getElementById("debug");
 const info = document.getElementById("info");
 
 const deadzone = 0.15;
-const modifier = 5;
+const modifier = 0.2;
 
 var interval;
 var vpInterval;
@@ -171,5 +171,5 @@ function motorCalc(x, y, r) {
     BD /= 2;
   }
 
-  return y < 0 ? [-AC/modifier+90, -BD/modifier+90, -round(navigator.getGamepads()[index].axes[3])*(2*modifier)+90, -round(navigator.getGamepads()[index].axes[3])*(2*modifier)+90, -AC/modifier+90, -BD/modifier+90] : [AC/modifier+90, BD/modifier+90, -round(navigator.getGamepads()[index].axes[3])*(2*modifier)+90, -round(navigator.getGamepads()[index].axes[3])*(2*modifier)+90, AC/modifier+90, BD/modifier+90];
+  return y < 0 ? [-AC*modifier+90, -BD*modifier+90, -round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90, -round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90, -AC*modifier+90, -BD*modifier+90] : [AC*modifier+90, BD*modifier+90, -round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90, -round(navigator.getGamepads()[index].axes[3])*(2/modifier)+90, AC*modifier+90, BD*modifier+90];
 }
