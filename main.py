@@ -1,12 +1,26 @@
 from flask import Flask, send_from_directory, request
 import logging
 
-app = Flask(__name__)
-logging.getLogger('werkzeug').setLevel(logging.INFO)
+app = Flask(__name__, static_folder="static")
 
-@app.route('/<path:file>', defaults={'file': 'index.html'})
-def serve(file):
-    return send_from_directory('static', file)
+@app.route("/")
+def serveIndex():
+    return send_from_directory("static", "index.html")
+
+@app.post("/motors")
+def motors():
+    #print(request.form)
+    return "Motors posted!"
+
+@app.post("/claw")
+def claw():
+    print(bool(request.form["enabled"]))
+    return "Claw posted!"
+
+@app.route("/<path>")
+def serve(path):
+    return send_from_directory("static", path)
 
 if __name__ == '__main__':
-    app.run(port=8080, host='0.0.0.0')
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8080)
