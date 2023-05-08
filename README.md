@@ -22,4 +22,4 @@ It is possible to run the ROV Control and Pneumatic automatically on starting us
  - Y/Triangle Button: Full Upwards Movement, Disabling Horizontal
  - Left Bumper: Half Horizontal Speed
  - Left Trigger: Rotate Claw (toggle rotation)
- - Right Trigger: Open Claw (releasing button close claw)
+ - Right Trigger: Open Claw (releasing button closes claw)
