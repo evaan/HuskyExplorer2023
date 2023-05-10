@@ -89,9 +89,9 @@ function degrees(radians) {return radians * (180/Math.PI);}
 
 function motorCalculation(x, y, r, v) {
     y *= -1;
-    if (forward) return [110, 110, v*verticalmultiplier+90, v*verticalmultiplier+90, 70, 70];
-    if (upfast) return [90, 90, verticalmultiplier*-1.5+90, verticalmultiplier*-1.5+90, 90, 90];
-    if (r != 0) return [90+(100*r)*multiplier, 90+(-100*r)*multiplier, v*verticalmultiplier+90, v*verticalmultiplier+90, 90-(-100*r)*multiplier, 90-(100*r)*multiplier];
+    if (upfast) return [90, 90, verticalmultiplier+90, verticalmultiplier+90, 90, 90];
+    if (forward) return [110, 110, v*verticalmultiplier+90, v*verticalmultiplier+90, 70, 70]
+    if (r != 0) return [90+(100*r)*multiplier, 90+(-100*r)*multiplier, v*20+90, v*20+90, 90-(-100*r)*multiplier, 90-(100*r)*multiplier];
 
     const p = Math.sqrt(x * x + y * y);
     let AC, BD;
