@@ -1,0 +1,12 @@
+[Unit]
+Description=Husky Explorer Sense Hat LEDS
+After=network.target
+
+[Service]
+ExecStart=/home/pi/ROV/Misc/SenseHat.py
+User=pi
+Type=notify
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
