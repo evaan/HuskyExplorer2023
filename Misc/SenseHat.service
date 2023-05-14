@@ -1,9 +1,9 @@
 [Unit]
-Description=Husky Explorer Sense Hat LEDS
+Description=Husky Explorer Sense HAT
 After=network.target
 
 [Service]
-ExecStart=/home/pi/ROV/Misc/SenseHat.py
+ExecStart=python3 /home/pi/ROV/Misc/SenseHat.py
 User=pi
 Type=notify
 Restart=always

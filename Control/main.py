@@ -11,9 +11,9 @@ app = WSGIApp(socket, static_files={"/": "./static/"})
 
 @socket.on("motors")
 def motors(sid, request):
-    for x in range[0, 6]:
+    for x in range(0, 6):
         kit.servo[x].angle = int(float(request["motor" + str(x)]))
-    kit.servo[8].angle = (0 if bool(request.form["clawrotate"]) else 120)
+    kit.servo[8].angle = (0 if bool(int(request["clawRotation"])) else 120)
     #print(request)
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-const socket = io();
+const socket = io(); 
 
 const connected = document.getElementById("connected");
 const debug = document.getElementById("debug");
@@ -24,7 +24,7 @@ window.addEventListener('gamepadconnected', (e) => {
     debug.textContent = `Id: ${e.gamepad.id}\nButtons: ${e.gamepad.buttons.length}\nAxes: ${e.gamepad.axes.length}`;
     requestAnimationFrame(onFrame);
     clawInterval = setInterval(function() {
-        socket.emit("http://192.168.177.11:5000/claw", {"enabled": bool(navigator.getGamepads()[0].buttons[7].pressed)});
+        $.post("http://192.168.177.11:5000/claw", {"enabled": (navigator.getGamepads()[index].buttons[7].pressed) ? 1 : 0});
     }, 500);
 });
 
@@ -70,7 +70,7 @@ function onFrame() {
 
     Claw Rotation: ${clawRotation}
     Claw Cooldown: ${clawCooldown}`;
-    socket.emit("motors", {"motor0": motors[0], "motor1": motors[1], "motor2": motors[2], "motor3": motors[3], "motor4": motors[4], "motor5": motors[5], "motor6": motors[6], "clawRotation": bool(clawRotation)});
+    socket.emit("motors", {"motor0": motors[0], "motor1": motors[1], "motor2": motors[2], "motor3": motors[3], "motor4": motors[4], "motor5": motors[5], "motor6": motors[6], "clawRotation": clawRotation ? "1" : "0"});
 }
 
 window.addEventListener('gamepaddisconnected', (e) => {
@@ -80,9 +80,9 @@ window.addEventListener('gamepaddisconnected', (e) => {
     clearInterval(clawInterval);
 });
 
-function round(int) {
-    if (deadzone > int && -deadzone < int) return 0;
-    else return Math.floor(int*100)/100;
+function round(input) {
+    if (deadzone > input && -deadzone < input) return 0;
+    else return Math.floor(input*100)/100;
 }
 
 function degrees(radians) {return radians * (180/Math.PI);}
@@ -109,5 +109,3 @@ function motorCalculation(x, y, r, v) {
     if (y<0) return [90+(-AC)*multiplier, 90+(-BD)*multiplier, v*verticalmultiplier+90, v*verticalmultiplier+90, 90-(-AC)*multiplier, 90-(-BD)*multiplier];
     else return [90+(AC)*multiplier, 90+(BD)*multiplier, v*verticalmultiplier+90, v*verticalmultiplier+90, 90-(AC)*multiplier, 90-(BD)*multiplier];
 }
-
-function bool(input) {return (input) ? "1" : "";}

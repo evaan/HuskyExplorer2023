@@ -3,7 +3,7 @@ Description=ROV Control Service
 After=network.target
 
 [Service]
-ExecStart=/home/pi/ROV/Control/index.py
+ExecStart=python3 /home/pi/ROV/Control/index.py
 WorkingDirectory=/home/pi/ROV/Control
 User=pi
 Type=notify
