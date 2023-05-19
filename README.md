@@ -3,6 +3,7 @@ This is the repository for the code of the 2023 MATE ROV.
 
 ## Installation (Requires Internet)
  - You will need `python3` installed on both machines, as these do not work with Python 2.7, I2C must also be enabled on the ROV, using `raspi-config`.
+ - On the pneumatics computer make sure the packages `python-dev` and `python-rpi.gpio` are both installed as these are required for the Pi to control the relay board.
  - Make sure to install the dependencies on requirements.txt on both machines.
  - On the ROV, run the `index.py` in the `Control` directory, making sure the correct IP is written for the pneumatics computer in the `claw()` function.
  - On the pneumatics computer, run the `index.py` in the `Pneumatics` directory.

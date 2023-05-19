@@ -36,7 +36,7 @@ function onFrame() {
     document.getElementById("halfspeed").hidden = !halfspeed;
     let temp = multiplier;
     if (halfspeed) multiplier/=2;
-    let motors = motorCalculation(round(navigator.getGamepads()[0].axes[0]), round(navigator.getGamepads()[0].axes[1]), round(navigator.getGamepads()[0].axes[3]), round(navigator.getGamepads()[0].axes[4]));
+    let motors = motorCalculation(round(navigator.getGamepads()[0].axes[0]), round(navigator.getGamepads()[0].axes[1]), round(navigator.getGamepads()[0].axes[2]), round(navigator.getGamepads()[0].axes[3]));
     if (navigator.getGamepads()[0].buttons[6].pressed && !clawCooldown) {
         clawRotation = !clawRotation;
         clawCooldown = true;

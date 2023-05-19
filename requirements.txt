@@ -1,3 +1,5 @@
 adafruit-circuitpython-servokit
 eventlet
 python-socketio
+flask_cors
+flask
