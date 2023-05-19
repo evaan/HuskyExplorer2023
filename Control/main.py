@@ -6,7 +6,7 @@ kit = ServoKit(channels=16, frequency=80)
 for x in range(0, 6):
     kit.servo[x].angle = 90
 
-socket = Server()
+socket = Server(cors_allowed_origins='*')
 app = WSGIApp(socket, static_files={"/": "./static/"})
 
 @socket.on("motors")
@@ -14,7 +14,7 @@ def motors(sid, request):
     for x in range(0, 6):
         kit.servo[x].angle = int(float(request["motor" + str(x)]))
     kit.servo[8].angle = (0 if bool(int(request["clawRotation"])) else 120)
-    #print(request)
+    print(request)
 
 if __name__ == '__main__':
     from eventlet import wsgi, listen

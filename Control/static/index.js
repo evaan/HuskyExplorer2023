@@ -14,8 +14,6 @@ var upfast = false;
 var forward = false;
 var forwardTime = 0;
 
-var clawInterval;
-
 var clawRotation = false;
 var clawCooldown = false;
 
@@ -23,9 +21,6 @@ window.addEventListener('gamepadconnected', (e) => {
     connected.classList = "green";
     debug.textContent = `Id: ${e.gamepad.id}\nButtons: ${e.gamepad.buttons.length}\nAxes: ${e.gamepad.axes.length}`;
     requestAnimationFrame(onFrame);
-    clawInterval = setInterval(function() {
-        $.post("http://192.168.177.11:5000/claw", {"enabled": (navigator.getGamepads()[index].buttons[7].pressed) ? 1 : 0});
-    }, 500);
 });
 
 function onFrame() {
@@ -40,8 +35,8 @@ function onFrame() {
     halfspeed = navigator.getGamepads()[0].buttons[4].pressed;
     document.getElementById("halfspeed").hidden = !halfspeed;
     let temp = multiplier;
-    if (halfspeed) multiplier /= 2;
-    let motors = motorCalculation(round(navigator.getGamepads()[0].axes[0]), round(navigator.getGamepads()[0].axes[1]), round(navigator.getGamepads()[0].axes[2]), round(navigator.getGamepads()[0].axes[3]));
+    if (halfspeed) multiplier/=2;
+    let motors = motorCalculation(round(navigator.getGamepads()[0].axes[0]), round(navigator.getGamepads()[0].axes[1]), round(navigator.getGamepads()[0].axes[3]), round(navigator.getGamepads()[0].axes[4]));
     if (navigator.getGamepads()[0].buttons[6].pressed && !clawCooldown) {
         clawRotation = !clawRotation;
         clawCooldown = true;
@@ -71,13 +66,13 @@ function onFrame() {
     Claw Rotation: ${clawRotation}
     Claw Cooldown: ${clawCooldown}`;
     socket.emit("motors", {"motor0": motors[0], "motor1": motors[1], "motor2": motors[2], "motor3": motors[3], "motor4": motors[4], "motor5": motors[5], "motor6": motors[6], "clawRotation": clawRotation ? "1" : "0"});
+    $.post("http://192.168.177.99:5001/claw", {"enabled": (navigator.getGamepads()[0].buttons[7].pressed) ? 1 : 0});
 }
 
 window.addEventListener('gamepaddisconnected', (e) => {
     connected.classList = "red";
     debug.textContent = "";
     info.textContent = "";
-    clearInterval(clawInterval);
 });
 
 function round(input) {
