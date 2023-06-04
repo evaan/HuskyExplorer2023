@@ -86,18 +86,18 @@ function motorCalculation(x, y, r, v) {
     y *= -1;
     if (upfast) return [90, 90, verticalmultiplier+90, verticalmultiplier+90, 90, 90];
     if (forward) return [110, 110, v*verticalmultiplier+90, v*verticalmultiplier+90, 70, 70]
-    if (r != 0) return [90+(100*r)*multiplier, 90+(-100*r)*multiplier, v*20+90, v*20+90, 90-(-100*r)*multiplier, 90-(100*r)*multiplier];
+    if (x != 0) return [90+(100*r)*multiplier, 90+(-100*r)*multiplier, v*20+90, v*20+90, 90-(-100*r)*multiplier, 90-(100*r)*multiplier];
 
-    const p = Math.sqrt(x * x + y * y);
+    const p = Math.sqrt(r * r + y * y);
     let AC, BD;
-    if ((x < 0) != (y < 0)) {
-        if (y !== 0) AC = ((100 - (degrees(Math.atan(Math.abs(x / y))) * (20/9)))) * p;
+    if ((r < 0) != (y < 0)) {
+        if (y !== 0) AC = ((100 - (degrees(Math.atan(Math.abs(r / y))) * (20/9)))) * p;
         else AC = -100 * p;
         BD = 100 * p;
         
     } else {
         AC = 100 * p;
-        if (y !== 0) BD = (100 - (degrees(Math.atan(Math.abs(x/y))) * (20/9))) * p;
+        if (y !== 0) BD = (100 - (degrees(Math.atan(Math.abs(r/y))) * (20/9))) * p;
         else BD = -100 * p;
     }
 

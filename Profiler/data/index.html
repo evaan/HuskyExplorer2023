@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ALVIN Control Panel</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="jquery-3.7.0.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                $.get("/setTime?time=" + Math.floor(new Date().getTime()/1000));
+            });
+            function start() {$.get("http://192.168.2.218/start");}
+            function stop() {$.get("http://192.168.2.218/stop");}
+            const interval = setInterval(() => {
+                $.get("/logs", function(data) {
+                    $('#logs').text(data);
+                });
+            }, 1000);
+        </script>
+        <style>
+            body {background-color: #323232}
+            p, h1 {
+                color: white;
+                font-family: Arial;
+                font-weight: bold;
+                white-space: pre-line;
+                margin-bottom: 0px;
+            }
+            .console {
+                margin: auto;
+                background-color: #222;
+                text-align: left;
+                width: 50%;
+                height: 512px;
+                border-radius: 24px;
+                overflow: auto;
+            }
+            .console * {
+                margin-top: 0px;
+                padding: 8px 8px;
+                font-family: monospace;
+            }
+            button {
+                background-color: initial;
+                background-image: linear-gradient(#8614f8 0, #760be0 100%);
+                border-radius: 5px;
+                border-style: none;
+                box-shadow: rgba(245, 244, 247, .25) 0 1px 1px inset;
+                color: #fff;
+                cursor: pointer;
+                display: inline-block;
+                font-family: Inter, sans-serif;
+                font-size: 32px;
+                font-weight: 500;
+                height: 60px;
+                line-height: 60px;
+                margin-left: -4px;
+                outline: 0;
+                text-align: center;
+                transition: all .3s cubic-bezier(.05, .03, .35, 1);
+                user-select: none;
+                -webkit-user-select: none;
+                touch-action: manipulation;
+                vertical-align: bottom;
+                width: 256px;
+                color: white;
+                font-family: Arial;
+                font-weight: bold;
+                white-space: pre-line;
+                display: table;
+                margin: 0 auto;
+            }
+            button:hover {
+                opacity: .7;
+            }
+            @media screen and (max-width: 1000px) {
+                button {
+                    font-size: 14px;
+                    height: 55px;
+                    line-height: 55px;
+                    width: 150px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <h1 style="text-align: center; font-size: 128px">ALVIN</h1>
+        <div style="margin: 0 auto; display: table;">
+            <button style="float: left; margin-right: 4px;" onclick="start()">Start</button>
+            <button style="float: left; margin-left: 4px;" onclick="stop()">Stop</button>    
+        </div>
+        <br/><br/>
+        <div class="console">
+            <p id="logs"></p>
+        </div>
+    </body>
+</html>
