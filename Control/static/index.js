@@ -17,6 +17,9 @@ var forwardTime = 0;
 var clawRotation = false;
 var clawCooldown = false;
 
+var oldMotors = [90, 90, 90, 90, 90, 90];
+var oldClaw = false;
+
 window.addEventListener('gamepadconnected', (e) => {
     connected.classList = "green";
     debug.textContent = `Id: ${e.gamepad.id}\nButtons: ${e.gamepad.buttons.length}\nAxes: ${e.gamepad.axes.length}`;
@@ -65,8 +68,10 @@ function onFrame() {
 
     Claw Rotation: ${clawRotation}
     Claw Cooldown: ${clawCooldown}`;
-    socket.emit("motors", {"motor0": motors[0], "motor1": motors[1], "motor2": motors[2], "motor3": motors[3], "motor4": motors[4], "motor5": motors[5], "motor6": motors[6], "clawRotation": clawRotation ? "1" : "0"});
-    $.post("http://192.168.177.99:5001/claw", {"enabled": (navigator.getGamepads()[0].buttons[7].pressed) ? 1 : 0});
+    if (oldMotors != motors) socket.emit("motors", {"motor0": motors[0], "motor1": motors[1], "motor2": motors[2], "motor3": motors[3], "motor4": motors[4], "motor5": motors[5], "motor6": motors[6], "clawRotation": clawRotation ? "1" : "0"});
+    if (oldClaw != navigator.getGamepads()[0].buttons[7].pressed) $.post("http://192.168.177.99:5001/claw", {"enabled": (navigator.getGamepads()[0].buttons[7].pressed) ? 1 : 0});
+    oldMotors = motors;
+    oldClaw = navigator.getGamepads()[0].buttons[7].pressed;
 }
 
 window.addEventListener('gamepaddisconnected', (e) => {
@@ -82,7 +87,7 @@ function round(input) {
 
 function degrees(radians) {return radians * (180/Math.PI);}
 
-function motorCalculation(x, y, r, v) {
+function motorCalculation(x, r, y, v) {
     y *= -1;
     if (upfast) return [90, 90, verticalmultiplier+90, verticalmultiplier+90, 90, 90];
     if (forward) return [110, 110, v*verticalmultiplier+90, v*verticalmultiplier+90, 70, 70]
