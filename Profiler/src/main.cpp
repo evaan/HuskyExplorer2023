@@ -2,10 +2,9 @@
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <Servo.h>
-#include "LittleFS.h"
-
-const char* ssid = "";
-const char* password = "";
+#include <LittleFS.h>
+#include <ArduinoJson.h>
+#include <stdio.h>
 
 AsyncWebServer server(80);
 Servo servo;
@@ -41,14 +40,35 @@ void logMsg(String message) {
 
 void setup() {
   Serial.begin(9600);
+  if(!LittleFS.begin()){
+    Serial.println("An Error has occurred while mounting LittleFS");
+    return;
+  }
+  File file = LittleFS.open("/config.json", "r");
+  if (!file) {
+    Serial.println("There was an error opening the file for reading");
+    return;
+  }
+  char tmp[512];
+  int i = 0;
+  while (file.available()) {
+    tmp[i] = file.read();
+    i++;
+  }
+  tmp[i] = '\0';
+  file.close();
+  StaticJsonDocument<512> doc;
+  DeserializationError err = deserializeJson(doc, tmp);
+  if (err) {
+    Serial.println("There was an error deserializing the JSON");
+    return;
+  }
+  const char* ssid = doc["ssid"];
+  const char* password = doc["password"];
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-  }
-  if(!LittleFS.begin()){
-    Serial.println("An Error has occurred while mounting LittleFS");
-    return;
   }
   Serial.println("");
   Serial.print("Connected to: ");
