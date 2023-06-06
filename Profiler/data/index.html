@@ -8,8 +8,8 @@
             $(document).ready(function() {
                 $.get("/setTime?time=" + Math.floor(new Date().getTime()/1000));
             });
-            function start() {$.get("http://192.168.2.218/start");}
-            function stop() {$.get("http://192.168.2.218/stop");}
+            function start() {$.get("/start");}
+            function stop() {$.get("/stop");}
             const interval = setInterval(() => {
                 $.get("/logs", function(data) {
                     $('#logs').text(data);

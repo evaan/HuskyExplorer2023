@@ -4,7 +4,7 @@
 #include <Servo.h>
 #include <LittleFS.h>
 #include <ArduinoJson.h>
-#include <stdio.h>
+#include <Thread.h>
 
 AsyncWebServer server(80);
 Servo servo;
@@ -14,6 +14,9 @@ bool enabled = false;
 String logs = "";
 
 int unixTime = 0;
+
+int stage = 0;
+Thread changeStageThread = Thread();
 
 String intToTimeStr(int n) {
   if (n < 10) return "0" + String(n);
@@ -37,6 +40,44 @@ String getTime(int t) {
 void logMsg(String message) {
     logs+=getTime(unixTime) + message + "\n";
 }
+
+void changeStage() {
+  switch(stage) {
+    case 0:
+      servo.write(180);
+      logMsg("Pushing syringe for 10 seconds to ensure correct position, this will not occur on following profiles.");
+      enabled = true;
+      stage = 1;
+      break;
+    case 1:
+      servo.write(0);
+      logMsg("Pulling syringe for 10 seconds...");
+      changeStageThread.setInterval(10000);
+      stage = 2;
+      break;
+    case 2:
+      servo.write(90);
+      logMsg("Waiting for 30 seconds...");
+      changeStageThread.setInterval(30000);
+      stage = 3;
+      break;
+    case 3:
+      servo.write(180);
+      logMsg("Pushing syringe for 10 seconds...");
+      changeStageThread.setInterval(10000);
+      stage = 4;
+      break;
+    case 4:
+      servo.write(90);
+      logMsg("Profile complete! Please press the start button again to complete another profile.");
+      enabled = false;
+      changeStageThread.enabled = false;
+      stage = 1;
+      break;
+  }
+}
+void extend() {servo.write(180);}
+void stop() {servo.write(90);}
 
 void setup() {
   Serial.begin(9600);
@@ -76,19 +117,27 @@ void setup() {
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
   servo.attach(2);
-  servo.write(90);
+  changeStageThread.enabled = false;
+  changeStageThread.setInterval(10000);
+  changeStageThread.onRun(changeStage);
   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {request->send(LittleFS, "/index.html", "text/html");});
   server.on("/jquery-3.7.0.min.js", HTTP_GET, [](AsyncWebServerRequest *request) {request->send(LittleFS, "/jquery-3.7.0.min.js", "text/javascript");});
   server.on("/start", HTTP_GET, [](AsyncWebServerRequest *request) {
-    if (!enabled) logMsg("ALVIN Starting!");
-    else logMsg("ALVIN already started!");
-    enabled = true;
+    if (enabled) {
+      logMsg("ALVIN already started!");
+      return;
+    }
+    logMsg("ALVIN Starting!");
+    changeStageThread.enabled = true;
+    changeStageThread.run();
     request->send_P(200, "text/html", "Started!");
   });
   server.on("/stop", HTTP_GET, [](AsyncWebServerRequest *request) {
     if (enabled) logMsg("ALVIN Stopped.");
     else logMsg("ALVIN already stopped!");
     enabled = false;
+    changeStageThread.enabled = false;
+    stage = 0;
     request->send_P(200, "text/html", "Stopped!");
   });
   server.on("/print", HTTP_GET, [](AsyncWebServerRequest *request) {
@@ -119,10 +168,9 @@ void setup() {
 }
 
 void loop() {
-  if (enabled) {
-      servo.write(0);
-      delay(1000);
-      servo.write(180);
-      delay(1000);
-  } else servo.write(90);
+  if (!enabled && !changeStageThread.enabled) {
+    if (servo.read() != 90) servo.write(90);
+    return;
+  }
+  if (changeStageThread.shouldRun()) changeStageThread.run();
 }
